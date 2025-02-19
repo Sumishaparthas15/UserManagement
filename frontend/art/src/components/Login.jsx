@@ -17,12 +17,19 @@ function Login() {
     e.preventDefault();
     try {
       const response = await axios.post('http://127.0.0.1:8000/app1/login/', formData);
-      console.log(response.data);
-      navigate('/profile'); 
+      
+      localStorage.setItem('access_token', response.data.access);
+      localStorage.setItem('refresh_token', response.data.refresh);
+  
+      axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`;
+  
+      alert("Login Successful!");
+      navigate('/profile');
     } catch (error) {
       console.error(error.response?.data || 'Login failed');
     }
   };
+  
 
   return (
     <div style={styles.container}>

@@ -25,18 +25,19 @@ class RegisterSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
-    print(email,password)
 
     def validate(self, data):
-        email = data.get('email')
-        password = data.get('password')
+        email = data.get("email")
+        password = data.get("password")
 
         if email and password:
             user = authenticate(username=email, password=password)
             if user:
+                if not user.is_email_verified:
+                    raise serializers.ValidationError("Email not verified. Please verify OTP before logging in.")
                 if not user.is_active:
                     raise serializers.ValidationError("User is deactivated.")
-                data['user'] = user
+                data["user"] = user
             else:
                 raise serializers.ValidationError("Invalid email or password.")
         else:
