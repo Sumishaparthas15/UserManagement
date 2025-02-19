@@ -17,11 +17,17 @@ function Login() {
     e.preventDefault();
     try {
       const response = await axios.post('http://127.0.0.1:8000/app1/login/', formData);
-      
-      localStorage.setItem('access_token', response.data.access);
-      localStorage.setItem('refresh_token', response.data.refresh);
   
-      axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`;
+      // Extract access and refresh tokens correctly
+      const accessToken = response.data.tokens.access;
+      const refreshToken = response.data.tokens.refresh;
+  
+      // Store tokens in localStorage
+      localStorage.setItem('access_token', accessToken);
+      localStorage.setItem('refresh_token', refreshToken);
+  
+      // Set authorization header for future requests
+      axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
   
       alert("Login Successful!");
       navigate('/profile');
